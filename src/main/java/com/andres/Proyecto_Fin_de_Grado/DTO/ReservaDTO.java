@@ -1,0 +1,21 @@
+package com.andres.Proyecto_Fin_de_Grado.DTO;
+
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.time.Instant;
+@Data
+@NoArgsConstructor
+public class ReservaDTO {
+        private String idMuelle;
+        private String dni; //form
+        private String matricula; //form
+        private String idPedido; //form (6 digitos)
+        private String actividad; //carga o descarga
+        private Instant fechaHoraReserva;
+        private String tipoCamion;
+    }
+
+}

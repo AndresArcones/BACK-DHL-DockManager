@@ -33,6 +33,13 @@ public class UsuarioController {
         return servicioUsuario.getUsuarios();
     }
 
+    //User
+    @GetMapping("/user/{username}")
+    @ResponseStatus(HttpStatus.OK)
+    public Usuario mostrarUsuarios(@PathVariable String username){
+        return servicioUsuario.getUsuarioPorNombreUsuario(username);
+    }
+
     //ALL
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)

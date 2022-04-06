@@ -1,9 +1,13 @@
 package com.andres.Proyecto_Fin_de_Grado;
 
+import com.andres.Proyecto_Fin_de_Grado.Model.Muelle;
 import com.andres.Proyecto_Fin_de_Grado.Model.Rol;
 import com.andres.Proyecto_Fin_de_Grado.Model.Usuario;
+import com.andres.Proyecto_Fin_de_Grado.Repository.RepositorioMuelle;
+import com.andres.Proyecto_Fin_de_Grado.Service.ServicioMuelle;
 import com.andres.Proyecto_Fin_de_Grado.Service.ServicioUsuarioImp;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -38,9 +42,12 @@ public class ProyectoFinDeGradoApplication {
 	}
 
 	@Bean
-	CommandLineRunner run(ServicioUsuarioImp servicioUsuarioImp){
+	CommandLineRunner run(ServicioUsuarioImp servicioUsuarioImp, ServicioMuelle servicioMuelle){
 		return args -> {
 			try {
+
+				servicioMuelle.crearMuelles(100);
+
 				Rol userRole = new Rol();
 				userRole.setNombre("ROL_USER");
 				Rol adminRole = new Rol();

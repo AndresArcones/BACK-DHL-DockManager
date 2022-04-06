@@ -19,7 +19,8 @@ public class Usuario {
     private String apellidos;
     private String usuario; //mail
     private String contrasenia;
-    private Collection<Rol> roles = new HashSet<>(); //falta migrar a set
+    private Collection<Rol> roles = new HashSet<>();
+    private Collection<Reserva> reservas = new HashSet<>();
 
     public Usuario(String nombre, String apellidos, String usuario, String contrasenia, Collection<Rol> roles) {
         this.nombre = nombre;
