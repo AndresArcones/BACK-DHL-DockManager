@@ -15,10 +15,22 @@ public class Reserva {
     @Id
     private String id;
     private String idMuelle;
+    private String nombreMuelle;
     private String dni; //form
     private String matricula; //form
     private String idPedido; //form (6 digitos)
     private String actividad; //carga o descarga
     private Instant fechaHoraReserva;
     private String tipoCamion;
+
+    public Reserva(String idMuelle,String nombreMuelle, String dni, String matricula, String idPedido, String actividad, Instant fechaHoraReserva, String tipoCamion) {
+        this.idMuelle = idMuelle;
+        this.nombreMuelle = nombreMuelle;
+        this.dni = dni;
+        this.matricula = matricula;
+        this.idPedido = idPedido;
+        this.actividad = actividad;
+        this.fechaHoraReserva = fechaHoraReserva;
+        this.tipoCamion = tipoCamion;
+    }
 }
