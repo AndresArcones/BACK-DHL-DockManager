@@ -17,7 +17,7 @@ public class ServicioMuelle {
 
     public void crearMuelles(int numeroMuelles){
         for (int i =0; i<numeroMuelles; i++){
-            Muelle muelle = new Muelle(String.valueOf(i+1),"descarga", "trailer", 6, 7, "disponible");
+            Muelle muelle = new Muelle(String.valueOf(i+1),"descarga", "trailer", 6, 8, "libre");
             repositorioMuelle.save(muelle);
         }
     }

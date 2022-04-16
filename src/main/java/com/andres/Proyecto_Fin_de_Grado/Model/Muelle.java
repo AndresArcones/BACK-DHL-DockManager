@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 
 @Data
 @Document
@@ -31,5 +32,20 @@ public class Muelle {
         this.estado = estado;
         this.reservas = new Reserva[numeroTramosReserva];
         this.nombre = nombre;
+    }
+
+    public boolean anularReserva(Reserva reserva){
+        if(reserva==null)
+            return false;
+
+        boolean ret = false;
+
+        for(int i =0;i<this.reservas.length;i++)
+            if (reserva.equals(this.reservas[i])){
+                this.reservas[i] = null;
+                ret = true;
+            }
+
+        return ret;
     }
 }

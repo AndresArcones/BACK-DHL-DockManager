@@ -30,5 +30,12 @@ public class Usuario {
         this.roles = roles;
     }
 
+    public boolean anularReserva(Reserva reserva){
+        if(reserva==null)
+            return false;
+
+        return this.reservas.remove(reserva);
+    }
+
 
 }

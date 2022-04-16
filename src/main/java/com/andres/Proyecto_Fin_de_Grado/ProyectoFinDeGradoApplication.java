@@ -1,11 +1,14 @@
 package com.andres.Proyecto_Fin_de_Grado;
 
 import com.andres.Proyecto_Fin_de_Grado.Model.Muelle;
+import com.andres.Proyecto_Fin_de_Grado.Model.Pedido;
 import com.andres.Proyecto_Fin_de_Grado.Model.Rol;
 import com.andres.Proyecto_Fin_de_Grado.Model.Usuario;
 import com.andres.Proyecto_Fin_de_Grado.Repository.RepositorioMuelle;
 import com.andres.Proyecto_Fin_de_Grado.Service.ServicioMuelle;
+import com.andres.Proyecto_Fin_de_Grado.Service.ServicioPedido;
 import com.andres.Proyecto_Fin_de_Grado.Service.ServicioUsuarioImp;
+import com.andres.Proyecto_Fin_de_Grado.utilidades.SimulateClock;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -42,10 +45,10 @@ public class ProyectoFinDeGradoApplication {
 	}
 
 	@Bean
-	CommandLineRunner run(ServicioUsuarioImp servicioUsuarioImp, ServicioMuelle servicioMuelle){
+	CommandLineRunner run(ServicioUsuarioImp servicioUsuarioImp, ServicioMuelle servicioMuelle, ServicioPedido servicioPedido){
 		return args -> {
 			try {
-
+				/**/
 				servicioMuelle.crearMuelles(100);
 
 				Rol userRole = new Rol();
@@ -90,7 +93,38 @@ public class ProyectoFinDeGradoApplication {
 				servicioUsuarioImp.guardarUsuario(usuario3);
 				servicioUsuarioImp.guardarUsuario(usuario4);
 
+				Pedido p1 = new Pedido();
+				p1.setId("5876123");
+				p1.setHoraSalida(null);
+				p1.setHoraEntrada(null);
+				p1.setMatricula("1111AAA");
+				p1.setHoraEntrada(null);
+				p1.setHoraSalida(null);
+				p1.setEstado("no entregado");
+				servicioPedido.guardarPedido(p1);
+
+				Pedido p2 = new Pedido();
+				p2.setId("5876124");
+				p2.setHoraSalida(null);
+				p2.setHoraEntrada(null);
+				p2.setMatricula("1111BBB");
+				p2.setHoraEntrada(null);
+				p2.setHoraSalida(null);
+				p2.setEstado("no entregado");
+				servicioPedido.guardarPedido(p2);
+
+				Pedido p3 = new Pedido();
+				p3.setId("5876125");
+				p3.setHoraSalida(null);
+				p3.setHoraEntrada(null);
+				p3.setMatricula("1111CCC");
+				p3.setHoraEntrada(null);
+				p3.setHoraSalida(null);
+				p3.setEstado("no entregado");
+				servicioPedido.guardarPedido(p3);
+
 				System.out.println(servicioUsuarioImp.getUsuarios());
+
 			}catch (Exception e){
 				e.printStackTrace();
 			}

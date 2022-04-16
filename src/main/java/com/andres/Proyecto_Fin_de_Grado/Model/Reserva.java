@@ -11,7 +11,7 @@ import java.time.Instant;
 @Data
 @Document
 @NoArgsConstructor
-public class Reserva {
+public class Reserva implements Comparable<Reserva>{
     @Id
     private String id;
     private String idMuelle;
@@ -33,4 +33,13 @@ public class Reserva {
         this.fechaHoraReserva = fechaHoraReserva;
         this.tipoCamion = tipoCamion;
     }
+
+    @Override
+    public int compareTo(Reserva reserva) {
+        if (getFechaHoraReserva() == null || reserva.getFechaHoraReserva() == null)
+            return 0;
+
+        return getFechaHoraReserva().compareTo(reserva.getFechaHoraReserva());
+    }
+
 }
