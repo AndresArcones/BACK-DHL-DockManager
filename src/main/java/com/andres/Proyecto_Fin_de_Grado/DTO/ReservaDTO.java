@@ -12,12 +12,13 @@ import java.util.Collection;
 @Data
 @NoArgsConstructor
 public class ReservaDTO {
-        private String idMuelle;
+        //private String idMuelle; ya viene en path
         private String dni; //form
         private String matricula; //form
         private String idPedido; //form (6 digitos)
         private String actividad; //carga o descarga
-        private Instant fechaHoraReserva;
+        //private Instant fechaHoraReserva;
+        private String fechaHoraReserva;
         private String tipoCamion;
         private int tramoHora;
 
