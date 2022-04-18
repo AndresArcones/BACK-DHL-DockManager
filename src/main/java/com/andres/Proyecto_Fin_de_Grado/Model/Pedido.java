@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
 
@@ -16,6 +17,9 @@ public class Pedido {
     private String id;
     private Instant horaEntrada;
     private Instant horaSalida;
-    private String estado; //metido,sacado,llegando
+    private String estado;
     private String matricula;
+    private long retraso = 0;
+    private long tiempoTardado = -1;
+
 }

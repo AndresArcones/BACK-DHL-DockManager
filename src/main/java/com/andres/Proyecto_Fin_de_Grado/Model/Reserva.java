@@ -22,6 +22,7 @@ public class Reserva implements Comparable<Reserva>{
     private String actividad; //carga o descarga
     private Instant fechaHoraReserva;
     private String tipoCamion;
+    private boolean anulada = false;
 
     public Reserva(String idMuelle,String nombreMuelle, String dni, String matricula, String idPedido, String actividad, Instant fechaHoraReserva, String tipoCamion) {
         this.idMuelle = idMuelle;

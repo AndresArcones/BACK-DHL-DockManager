@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -30,6 +31,8 @@ public class ServicioReserva {
 
     public Reserva comprobarReserva(String matricula, Instant fechaHoraReserva) {
         List<Reserva> res = repositorioReserva.findByMatriculaEquals(matricula);
+        res.removeIf(r -> r.getFechaHoraReserva()!= null && !(r.getFechaHoraReserva().atZone(ZoneOffset.UTC).getDayOfYear() == SimulateClock.getMomentoSimulacion().atOffset(ZoneOffset.UTC).getDayOfYear()));
+        // si es a las 23:50 técnicamente no es el mismo día, lo ponemos??
 
         if(res.isEmpty())
             return null;
@@ -37,8 +40,13 @@ public class ServicioReserva {
         else{
             for (Reserva r : res) {
                 Instant fh = r.getFechaHoraReserva();
-                long d = Duration.between(fechaHoraReserva, fh).toMinutes();
+                long d = Duration.between(fh, fechaHoraReserva).toMinutes();
                 Pedido pedido = repositorioPedido.findById(r.getIdPedido()).get();
+
+                if(d > 0 && pedido.getHoraEntrada() == null){
+                    pedido.setRetraso(d);
+                    repositorioPedido.save(pedido);
+                }
 
                 if((d >= -10 && d <= 10) || (pedido.getHoraEntrada() != null && pedido.getHoraSalida() == null))
                     return r;
@@ -49,11 +57,8 @@ public class ServicioReserva {
     }
 
     public Collection<Reserva> reservasPantalla(){
-        List<Reserva> res = repositorioReserva.findAll();
-
-        if(res.size()<7) {
-            return res;
-        }
+        List<Reserva> res = repositorioReserva.findByAnuladaEquals(false);
+        res.removeIf(r -> r.getFechaHoraReserva()!= null && !(r.getFechaHoraReserva().atZone(ZoneOffset.UTC).getDayOfYear() == SimulateClock.getMomentoSimulacion().atOffset(ZoneOffset.UTC).getDayOfYear()));
 
         Reserva foo = new Reserva();
         foo.setFechaHoraReserva(SimulateClock.getMomentoSimulacion());
@@ -62,8 +67,9 @@ public class ServicioReserva {
         List<Reserva> ret = new ArrayList<Reserva>();
         int idx = res.indexOf(foo);
 
-        for(int i=-3;i<4;i++)
-            if(i!=0 && i+idx >= 0 && i+idx <res.size())
+        //meter margen de 10 mins antes????
+        for(int i=1;i<=4;i++)
+            if(i+idx <res.size())
                 ret.add(res.get(idx+i));
 
         return ret;

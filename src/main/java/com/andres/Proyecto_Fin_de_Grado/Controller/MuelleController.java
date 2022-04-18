@@ -2,6 +2,7 @@ package com.andres.Proyecto_Fin_de_Grado.Controller;
 
 import com.andres.Proyecto_Fin_de_Grado.DTO.HoraDTO;
 import com.andres.Proyecto_Fin_de_Grado.DTO.InfoBarreraDTO;
+import com.andres.Proyecto_Fin_de_Grado.DTO.KpiDTO;
 import com.andres.Proyecto_Fin_de_Grado.DTO.ReservaDTO;
 import com.andres.Proyecto_Fin_de_Grado.Model.Muelle;
 import com.andres.Proyecto_Fin_de_Grado.Model.Pedido;
@@ -12,12 +13,15 @@ import com.andres.Proyecto_Fin_de_Grado.Repository.RepositorioPedido;
 import com.andres.Proyecto_Fin_de_Grado.Repository.RepositorioReserva;
 import com.andres.Proyecto_Fin_de_Grado.Repository.RepositorioUsuario;
 import com.andres.Proyecto_Fin_de_Grado.Service.ServicioMuelle;
+import com.andres.Proyecto_Fin_de_Grado.Service.ServicioPedido;
 import com.andres.Proyecto_Fin_de_Grado.Service.ServicioReserva;
 import com.andres.Proyecto_Fin_de_Grado.Service.ServicioUsuarioImp;
 import com.andres.Proyecto_Fin_de_Grado.utilidades.DecodificarJWT;
 import com.andres.Proyecto_Fin_de_Grado.utilidades.JWT;
 import com.andres.Proyecto_Fin_de_Grado.utilidades.SimulateClock;
+import com.google.gson.Gson;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
@@ -25,9 +29,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api")
@@ -40,6 +42,7 @@ public class MuelleController {
     private final RepositorioUsuario repositorioUsuario;
     private final ServicioReserva servicioReserva;
     private final RepositorioPedido repositorioPedido;
+    private final ServicioPedido servicioPedido;
 
 
     //USER
@@ -64,12 +67,12 @@ public class MuelleController {
         Usuario userReserva = servicioUsuarioImp.getUsuarioPorNombreUsuario(token.getNombreUsuario());*/
         Muelle muelle = servicioMuelle.muelle(muelleId);
 
-        //CAMBIAR A SUMAR TRAMO A APERTURA
-        Instant ahora = LocalDateTime.now().toInstant(ZoneOffset.of("+00:00"));
-        String[] hora = reservaDTO.getFechaHoraReserva().split(":");
+        //tramo empieza 0 o 1?
+        Instant ahora = SimulateClock.getMomentoSimulacion();
+        int hora = muelle.getAperturaMuelle() + reservaDTO.getTramoHora();
         Instant nueva = ahora.atZone(ZoneOffset.UTC)
-                .withHour(Integer.parseInt(hora[0]))
-                .withMinute(Integer.parseInt(hora[1]))
+                .withHour(hora)
+                .withMinute(0)
                 .withSecond(0)
                 .withNano(0)
                 .toInstant().plus(0, ChronoUnit.DAYS); //CAMBIAR A +1 AL FINALIZAR CHECKEO
@@ -115,6 +118,7 @@ public class MuelleController {
 
         Reserva res =  servicioReserva.comprobarReserva(infoBarreraDTO.getMatricula(),SimulateClock.getMomentoSimulacion()) ;
 
+
         if(res != null){
             Pedido ped = repositorioPedido.findById(res.getIdPedido()).get();
             Muelle mue = repositorioMuelle.findById(res.getIdMuelle()).get();
@@ -135,6 +139,8 @@ public class MuelleController {
                     ped.setEstado("cargado");
                 else
                     ped.setEstado("descargado");
+
+                ped.setTiempoTardado(Duration.between(ped.getHoraEntrada(), ped.getHoraSalida()).toMinutes());
                 mue.setEstado("libre");
             }
 
@@ -142,5 +148,80 @@ public class MuelleController {
         }
 
         return res;
+    }
+
+    @GetMapping("/kpi")
+    public KpiDTO kpi(){
+        String ret = "";
+        double retRes = 0.0;
+        double retPed = 0.0;
+        Map<String, Double> retMue = new LinkedHashMap<String, Double>();
+
+
+        int numPedidos = servicioPedido.pedidosMes().size();
+        int numPedidosRetrasados = servicioPedido.pedidosRetrasadosMes().size();
+
+        int numResAnuladas  = repositorioReserva.findByAnuladaEquals(true).size();
+        int numRes = repositorioReserva.findAll().size();
+
+        if(numRes > 0)
+            retRes = (double) numResAnuladas*100/numRes;
+        else
+            retRes = 0;
+
+        if(numPedidos > 0)
+            retPed = (double) numPedidosRetrasados*100/numPedidos;
+        else
+            retPed = 0;
+
+        List<Muelle> muelles = repositorioMuelle.findAll();
+        //nombreMuelles = new String[muelles.size()];
+        //retMue = new double[muelles.size()];
+
+        for(int i=0;i<muelles.size();i++){
+            Muelle m = muelles.get(i);
+            retMue.put(m.getNombre(),m.PorcentajeUso());
+        }
+
+        return new KpiDTO(retRes,retPed,retMue);
+    }
+
+    @GetMapping("/pedidos_hasta_ahora")
+    public List<Pedido> pedidos(){
+        List<Pedido> ret = repositorioPedido.findByEstadoEquals("cargado");
+        ret.addAll(repositorioPedido.findByEstadoEquals("descargado"));
+        ret.removeIf(p -> p.getHoraEntrada()!= null && !(p.getHoraEntrada().atZone(ZoneOffset.UTC).getDayOfYear() == SimulateClock.getMomentoSimulacion().atOffset(ZoneOffset.UTC).getDayOfYear()));
+
+        return ret;
+    }
+
+    @GetMapping("/pedidos_dia")
+    public Map<String,List<Pedido>> pedidosDia(){
+        List<Pedido> pedidos = repositorioPedido.findByEstadoEquals("cargado");
+        pedidos.addAll(repositorioPedido.findByEstadoEquals("descargado"));
+
+        List<Muelle> muelles = repositorioMuelle.findAll();
+
+        Map<String, List<Pedido>> map = new LinkedHashMap<String, List<Pedido>>();
+
+        for(Muelle m : muelles){
+            String nombre = m.getNombre();
+            List<Pedido> lista = new ArrayList<>();
+
+            for(Reserva r : m.getReservas())
+                if(r != null)
+                    for(Pedido p : pedidos){
+                        long d = Duration.between(SimulateClock.getMomentoSimulacion(),p.getHoraEntrada()).toSeconds();
+                        if(d>=-24*60*60 && d<=24*60*60 && r.getIdPedido().equals(p.getId()))
+                            lista.add(p);
+                    }
+
+            if(lista.size()>0)
+                map.put(nombre,lista);
+            else
+                map.put(nombre,null);
+        }
+
+        return map;
     }
 }

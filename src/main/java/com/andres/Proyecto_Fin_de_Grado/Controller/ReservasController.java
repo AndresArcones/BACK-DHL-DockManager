@@ -32,11 +32,12 @@ public class ReservasController {
 
     @PostMapping("/reserva/anular/{reservaId}")
     public boolean anularReserva(@PathVariable String reservaId, @RequestHeader Map<String, String> headers ){
-        Optional<Reserva> res = repositorioReserva.findById(reservaId);
-        repositorioReserva.deleteById(reservaId);
+        Reserva res = repositorioReserva.findById(reservaId).get();
+        res.setAnulada(true);
+        repositorioReserva.save(res);
 
-        Muelle mue = servicioMuelle.muelle(res.get().getIdMuelle());
-        boolean ret =  mue.anularReserva(res.get());
+        Muelle mue = servicioMuelle.muelle(res.getIdMuelle());
+        boolean ret =  mue.anularReserva(res);
         repositorioMuelle.save(mue);
         return ret;
 

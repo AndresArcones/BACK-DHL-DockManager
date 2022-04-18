@@ -49,7 +49,7 @@ public class ProyectoFinDeGradoApplication {
 		return args -> {
 			try {
 				/**/
-				servicioMuelle.crearMuelles(100);
+
 
 				Rol userRole = new Rol();
 				userRole.setNombre("ROL_USER");
@@ -58,6 +58,8 @@ public class ProyectoFinDeGradoApplication {
 
 				servicioUsuarioImp.guardarRol(userRole);
 				servicioUsuarioImp.guardarRol(adminRole);
+
+				servicioMuelle.crearMuelles(100);
 
 				Usuario usuario1 = new Usuario();
 				usuario1.setUsuario("andres.arcones.crespo@gmail.com");

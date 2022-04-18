@@ -5,9 +5,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Optional;
+import java.util.*;
 
 @Data
 @Document
@@ -47,5 +45,9 @@ public class Muelle {
             }
 
         return ret;
+    }
+
+    public double PorcentajeUso(){
+        return (double) Arrays.stream(reservas).filter(Objects::nonNull).count()*100/reservas.length;
     }
 }

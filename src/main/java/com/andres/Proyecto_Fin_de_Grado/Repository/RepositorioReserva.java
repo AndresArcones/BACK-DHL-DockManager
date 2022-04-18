@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface RepositorioReserva extends MongoRepository<Reserva, String> {
     List<Reserva> findByMatriculaEquals(String matricula);
+    List<Reserva> findByAnuladaEquals(boolean anulada);
 }
