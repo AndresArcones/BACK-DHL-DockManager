@@ -53,7 +53,7 @@ public class ReservasController {
         usu.anularReserva(res);
         repositorioUsuario.save(usu);
 
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND,"no anulada");
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND,"no anulada"); 
 
     }
 
