@@ -94,18 +94,11 @@ public class MuelleController {
     @PostMapping("/hora")
     public void cambiarHora(@RequestBody HoraDTO horaDTO) {
 
-        if(horaDTO.getHora().equals("ahora"))
+        if(horaDTO.getHora() == 0)
             SimulateClock.setAhora(true);
 
         else{
-            Instant ahora = LocalDateTime.now().toInstant(ZoneOffset.of("+00:00"));
-            String[] hora = horaDTO.getHora().split(":");
-            Instant nueva = ahora.atZone(ZoneOffset.UTC)
-                    .withHour(Integer.parseInt(hora[0]))
-                    .withMinute(Integer.parseInt(hora[1]))
-                    .withSecond(0)
-                    .withNano(0)
-                    .toInstant();
+            Instant nueva = Instant.ofEpochMilli(horaDTO.getHora());
 
             SimulateClock.setAhora(false);
             SimulateClock.setMomentoSimulacion(nueva);
@@ -199,6 +192,7 @@ public class MuelleController {
     public Map<String,List<Pedido>> pedidosDia(){
         List<Pedido> pedidos = repositorioPedido.findByEstadoEquals("cargado");
         pedidos.addAll(repositorioPedido.findByEstadoEquals("descargado"));
+        pedidos.removeIf(p -> p.getHoraEntrada()!= null && !(p.getHoraEntrada().atZone(ZoneOffset.UTC).getDayOfYear() == SimulateClock.getMomentoSimulacion().atOffset(ZoneOffset.UTC).getDayOfYear()));
 
         List<Muelle> muelles = repositorioMuelle.findAll();
 
@@ -210,11 +204,10 @@ public class MuelleController {
 
             for(Reserva r : m.getReservas())
                 if(r != null)
-                    for(Pedido p : pedidos){
-                        long d = Duration.between(SimulateClock.getMomentoSimulacion(),p.getHoraEntrada()).toSeconds();
-                        if(d>=-24*60*60 && d<=24*60*60 && r.getIdPedido().equals(p.getId()))
+                    for(Pedido p : pedidos)
+                        if(r.getIdPedido().equals(p.getId()))
                             lista.add(p);
-                    }
+
 
             if(lista.size()>0)
                 map.put(nombre,lista);
