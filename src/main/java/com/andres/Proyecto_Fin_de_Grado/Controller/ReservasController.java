@@ -50,10 +50,13 @@ public class ReservasController {
         //IMPORTANTE DESCOMENTAR AL FINAL PARA CHECKAR USUARIO !!!!!!!!!!!!!????????????
         JWT token = DecodificarJWT.decode(headers.get("authorization"));
         Usuario usu = servicioUsuarioImp.getUsuarioPorNombreUsuario(token.getNombreUsuario());
-        usu.anularReserva(res);
+        ret = usu.anularReserva(res);
         repositorioUsuario.save(usu);
 
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND,"no anulada"); 
+        if(ret)
+            throw new ResponseStatusException(HttpStatus.OK,"Reserva anulada correctamente");
+        else
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Error al anular reserva");
 
     }
 

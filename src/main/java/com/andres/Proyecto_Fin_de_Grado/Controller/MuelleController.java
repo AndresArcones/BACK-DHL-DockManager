@@ -21,8 +21,10 @@ import com.andres.Proyecto_Fin_de_Grado.utilidades.JWT;
 import com.andres.Proyecto_Fin_de_Grado.utilidades.SimulateClock;
 import com.google.gson.Gson;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -67,9 +69,8 @@ public class MuelleController {
         Usuario userReserva = servicioUsuarioImp.getUsuarioPorNombreUsuario(token.getNombreUsuario());
         Muelle muelle = servicioMuelle.muelle(muelleId);
 
-        //tramo empieza 0 o 1?
         Instant ahora = SimulateClock.getMomentoSimulacion();
-        int hora = muelle.getAperturaMuelle() + reservaDTO.getTramoHora();
+        int hora = muelle.getAperturaMuelle() + reservaDTO.getTramoHora() -1;
         Instant nueva = ahora.atZone(ZoneOffset.UTC)
                 .withHour(hora)
                 .withMinute(0)
@@ -87,7 +88,12 @@ public class MuelleController {
 
         //IMPORTANTE DESCOMENTAR AL FINAL PARA CHECKAR USUARIO !!!!!!!!!!!!!????????????
         userReserva.aniadirReserva(reserva);
-        repositorioUsuario.save(userReserva);
+        Usuario u = repositorioUsuario.save(userReserva);
+
+        if(u != null)
+            throw new ResponseStatusException(HttpStatus.OK,"Reserva realizada correctamente");
+        else
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Error al realizar reserva");
 
     }
 
@@ -103,11 +109,15 @@ public class MuelleController {
             SimulateClock.setAhora(false);
             SimulateClock.setMomentoSimulacion(nueva);
         }
-        //return SimulateClock.getMomentoSimulacion();
+
+        if(SimulateClock.getMomentoSimulacion() != null)
+            throw new ResponseStatusException(HttpStatus.OK,"Hora cambiada a " + SimulateClock.getMomentoSimulacion().toString());
+        else
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Error al cambiar la hora");
     }
 
     @PostMapping("/barrera")
-    public Reserva accionarBarrera(@RequestBody InfoBarreraDTO infoBarreraDTO){
+    public void accionarBarrera(@RequestBody InfoBarreraDTO infoBarreraDTO){
 
         Reserva res =  servicioReserva.comprobarReserva(infoBarreraDTO.getMatricula(),SimulateClock.getMomentoSimulacion()) ;
 
@@ -140,7 +150,10 @@ public class MuelleController {
             repositorioPedido.save(ped);
         }
 
-        return res;
+        if(res!= null)
+            throw new ResponseStatusException(HttpStatus.OK,"Barrera abierta");
+        else
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"No se ha abierto la barrera");
     }
 
     @GetMapping("/kpi")
