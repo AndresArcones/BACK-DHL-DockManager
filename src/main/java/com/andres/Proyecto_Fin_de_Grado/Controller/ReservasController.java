@@ -35,7 +35,7 @@ public class ReservasController {
         return servicioReserva.mostrarReservas();
     }
 
-    @PostMapping("/reserva/anular/{reservaId}")
+    @GetMapping("/reserva/anular/{reservaId}")
     public boolean anularReserva(@PathVariable String reservaId, @RequestHeader Map<String, String> headers ){
         Reserva res = repositorioReserva.findById(reservaId).get();
         res.setAnulada(true);
