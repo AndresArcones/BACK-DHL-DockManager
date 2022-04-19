@@ -88,12 +88,11 @@ public class MuelleController {
 
         //IMPORTANTE DESCOMENTAR AL FINAL PARA CHECKAR USUARIO !!!!!!!!!!!!!????????????
         userReserva.aniadirReserva(reserva);
-        Usuario u = repositorioUsuario.save(userReserva);
+        repositorioUsuario.save(userReserva);
 
-        if(u != null)
-            throw new ResponseStatusException(HttpStatus.OK,"Reserva realizada correctamente");
-        else
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Error al realizar reserva");
+
+        throw new ResponseStatusException(HttpStatus.OK,"Reserva realizada correctamente");
+
 
     }
 
