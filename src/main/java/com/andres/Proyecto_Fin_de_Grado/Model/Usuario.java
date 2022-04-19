@@ -41,7 +41,11 @@ public class Usuario {
         if(reserva==null)
             return false;
 
-        return this.reservas.remove(reserva);
+        boolean ret = this.reservas.remove(reserva);
+        reserva.setAnulada(true);
+        this.reservas.add(reserva);
+
+        return ret;
     }
 
 
