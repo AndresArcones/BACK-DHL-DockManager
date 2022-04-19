@@ -12,7 +12,9 @@ import com.andres.Proyecto_Fin_de_Grado.Service.ServicioUsuario;
 import com.andres.Proyecto_Fin_de_Grado.utilidades.DecodificarJWT;
 import com.andres.Proyecto_Fin_de_Grado.utilidades.JWT;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collection;
 import java.util.Map;
@@ -36,7 +38,7 @@ public class ReservasController {
     }
 
     @GetMapping("/reserva/anular/{reservaId}")
-    public boolean anularReserva(@PathVariable String reservaId, @RequestHeader Map<String, String> headers ){
+    public void anularReserva(@PathVariable String reservaId, @RequestHeader Map<String, String> headers ){
         Reserva res = repositorioReserva.findById(reservaId).get();
         res.setAnulada(true);
         repositorioReserva.save(res);
@@ -51,7 +53,7 @@ public class ReservasController {
         usu.anularReserva(res);
         repositorioUsuario.save(usu);
 
-        return ret;
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND,"no anulada");
 
     }
 
