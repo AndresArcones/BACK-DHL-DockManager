@@ -30,6 +30,13 @@ public class Usuario {
         this.roles = roles;
     }
 
+    public boolean aniadirReserva(Reserva reserva){
+        if(reserva==null)
+            return false;
+
+        return this.reservas.add(reserva);
+    }
+
     public boolean anularReserva(Reserva reserva){
         if(reserva==null)
             return false;

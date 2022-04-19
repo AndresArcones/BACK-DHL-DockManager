@@ -86,7 +86,7 @@ public class MuelleController {
         repositorioMuelle.save(muelle);
 
         //IMPORTANTE DESCOMENTAR AL FINAL PARA CHECKAR USUARIO !!!!!!!!!!!!!????????????
-        userReserva.getReservas().add(reserva);
+        userReserva.aniadirReserva(reserva);
         repositorioUsuario.save(userReserva);
 
     }
