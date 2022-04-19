@@ -44,14 +44,15 @@ public class ReservasController {
         Muelle mue = servicioMuelle.muelle(res.getIdMuelle());
         boolean ret =  mue.anularReserva(res);
         repositorioMuelle.save(mue);
-        return ret;
 
-        /* IMPORTANTE DESCOMENTAR AL FINAL PARA CHECKAR USUARIO !!!!!!!!!!!!!????????????
+        //IMPORTANTE DESCOMENTAR AL FINAL PARA CHECKAR USUARIO !!!!!!!!!!!!!????????????
         JWT token = DecodificarJWT.decode(headers.get("authorization"));
         Usuario usu = servicioUsuarioImp.getUsuarioPorNombreUsuario(token.getNombreUsuario());
         usu.anularReserva(res);
-        repositorioUsuario.save(usu)
-        */
+        repositorioUsuario.save(usu);
+
+        return ret;
+
     }
 
     @GetMapping("/reserva/pantalla")
