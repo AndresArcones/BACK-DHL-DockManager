@@ -64,7 +64,7 @@ public class MuelleController {
     @PostMapping("/reserva/{muelleId}")
     public void aniadirReserva(@PathVariable String muelleId, @RequestBody ReservaDTO reservaDTO, @RequestHeader Map<String, String> headers ){
 
-        //IMPORTANTE DESCOMENTAR AL FINAL PARA CHECKAR USUARIO !!!!!!!!!!!!!????????????
+        IMPORTANTE DESCOMENTAR AL FINAL PARA CHECKAR USUARIO !!!!!!!!!!!!!????????????
         JWT token = DecodificarJWT.decode(headers.get("authorization"));
         Usuario userReserva = servicioUsuarioImp.getUsuarioPorNombreUsuario(token.getNombreUsuario());
         Muelle muelle = servicioMuelle.muelle(muelleId);
@@ -86,7 +86,6 @@ public class MuelleController {
         muelle.getReservas()[reservaDTO.getTramoHora()] = reserva;
         repositorioMuelle.save(muelle);
 
-        //IMPORTANTE DESCOMENTAR AL FINAL PARA CHECKAR USUARIO !!!!!!!!!!!!!????????????
         userReserva.aniadirReserva(reserva);
         repositorioUsuario.save(userReserva);
 
