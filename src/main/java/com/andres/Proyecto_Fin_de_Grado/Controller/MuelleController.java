@@ -64,7 +64,6 @@ public class MuelleController {
     @PostMapping("/reserva/{muelleId}")
     public void aniadirReserva(@PathVariable String muelleId, @RequestBody ReservaDTO reservaDTO, @RequestHeader Map<String, String> headers ){
 
-        IMPORTANTE DESCOMENTAR AL FINAL PARA CHECKAR USUARIO !!!!!!!!!!!!!????????????
         JWT token = DecodificarJWT.decode(headers.get("authorization"));
         Usuario userReserva = servicioUsuarioImp.getUsuarioPorNombreUsuario(token.getNombreUsuario());
         Muelle muelle = servicioMuelle.muelle(muelleId);
