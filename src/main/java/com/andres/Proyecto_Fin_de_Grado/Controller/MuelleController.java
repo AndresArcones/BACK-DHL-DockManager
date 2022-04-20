@@ -1,9 +1,6 @@
 package com.andres.Proyecto_Fin_de_Grado.Controller;
 
-import com.andres.Proyecto_Fin_de_Grado.DTO.HoraDTO;
-import com.andres.Proyecto_Fin_de_Grado.DTO.InfoBarreraDTO;
-import com.andres.Proyecto_Fin_de_Grado.DTO.KpiDTO;
-import com.andres.Proyecto_Fin_de_Grado.DTO.ReservaDTO;
+import com.andres.Proyecto_Fin_de_Grado.DTO.*;
 import com.andres.Proyecto_Fin_de_Grado.Model.Muelle;
 import com.andres.Proyecto_Fin_de_Grado.Model.Pedido;
 import com.andres.Proyecto_Fin_de_Grado.Model.Reserva;
@@ -155,10 +152,9 @@ public class MuelleController {
 
     @GetMapping("/kpi")
     public KpiDTO kpi(){
-        String ret = "";
         double retRes = 0.0;
         double retPed = 0.0;
-        Map<String, Double> retMue = new LinkedHashMap<String, Double>();
+        double retMue = 0.0;
 
 
         int numPedidos = servicioPedido.pedidosMes().size();
@@ -178,15 +174,27 @@ public class MuelleController {
             retPed = 0;
 
         List<Muelle> muelles = repositorioMuelle.findAll();
-        //nombreMuelles = new String[muelles.size()];
-        //retMue = new double[muelles.size()];
 
         for(int i=0;i<muelles.size();i++){
             Muelle m = muelles.get(i);
-            retMue.put(m.getNombre(),m.PorcentajeUso());
+            retMue += m.PorcentajeUso();
         }
 
-        return new KpiDTO(retRes,retPed,retMue);
+        return new KpiDTO(retRes,retPed,retMue/muelles.size());
+    }
+
+    @GetMapping("/kpi_muelles")
+    public Collection <KpiMuellesDTO> kpi_muelles(){
+        List<KpiMuellesDTO> ret = new ArrayList<KpiMuellesDTO>();
+
+        List<Muelle> muelles = repositorioMuelle.findAll();
+
+        for(int i=0;i<muelles.size();i++){
+            Muelle m = muelles.get(i);
+            ret.add(new KpiMuellesDTO(m.getNombre,m.PorcentajeUso()));
+        }
+
+        return ret;
     }
 
     @GetMapping("/pedidos_hasta_ahora")

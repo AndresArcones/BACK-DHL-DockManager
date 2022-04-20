@@ -12,8 +12,8 @@ import java.util.Map;
 public class KpiDTO {
         private double porReservasCanceldasMes;
         private double porRetrasosLllegada;
-        Map<String, Double> porUtilizacionMuelles;
-        public KpiDTO(double porReservasCanceldasMes, double porRetrasosLllegada, Map<String, Double> porUtilizacionMuelles){
+        private double porUtilizacionMuelles;
+        public KpiDTO(double porReservasCanceldasMes, double porRetrasosLllegada, double porUtilizacionMuelles){
                 this.porReservasCanceldasMes = porReservasCanceldasMes;
                 this.porRetrasosLllegada = porRetrasosLllegada;
                 this.porUtilizacionMuelles = porUtilizacionMuelles;
