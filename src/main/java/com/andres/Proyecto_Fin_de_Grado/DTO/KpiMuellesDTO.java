@@ -10,4 +10,9 @@ import java.util.Map;
 public class KpiMuellesDTO {
         private String nombre;
         private double porUso;
+
+        public KpiMuellesDTO(String nombre, double porUso){
+                this.nombre = nombre;
+                this.porUso = porUso;
+        }
 }
