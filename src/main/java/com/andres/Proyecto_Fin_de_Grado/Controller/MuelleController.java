@@ -191,7 +191,7 @@ public class MuelleController {
 
         for(int i=0;i<muelles.size();i++){
             Muelle m = muelles.get(i);
-            ret.add(new KpiMuellesDTO(m.getNombre,m.PorcentajeUso()));
+            ret.add(new KpiMuellesDTO(m.getNombre(),m.PorcentajeUso()));
         }
 
         return ret;
