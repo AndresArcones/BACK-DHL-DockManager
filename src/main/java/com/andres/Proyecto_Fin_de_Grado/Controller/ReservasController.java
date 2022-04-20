@@ -19,6 +19,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping("/api")
@@ -41,16 +43,15 @@ public class ReservasController {
     public void anularReserva(@PathVariable String reservaId, @RequestHeader Map<String, String> headers ){
         Reserva res = repositorioReserva.findById(reservaId).get();
         res.setAnulada(true);
-        repositorioReserva.save(res);
+        res = repositorioReserva.save(res);
 
         Muelle mue = servicioMuelle.muelle(res.getIdMuelle());
-        boolean ret =  mue.anularReserva(res);
+        boolean ret =  mue.anularReserva(res.getId());
         repositorioMuelle.save(mue);
 
         //IMPORTANTE DESCOMENTAR AL FINAL PARA CHECKAR USUARIO !!!!!!!!!!!!!????????????
         JWT token = DecodificarJWT.decode(headers.get("authorization"));
         Usuario usu = servicioUsuarioImp.getUsuarioPorNombreUsuario(token.getNombreUsuario());
-        ret = usu.anularReserva(res);
         repositorioUsuario.save(usu);
 
         if(ret)
@@ -71,7 +72,8 @@ public class ReservasController {
         JWT token = DecodificarJWT.decode(headers.get("authorization"));
 
         Usuario usu = servicioUsuarioImp.getUsuarioPorNombreUsuario(token.getNombreUsuario());
-        return usu.getReservas();
+
+        return StreamSupport.stream(repositorioReserva.findAllById(usu.getReservas()).spliterator(), false).collect(Collectors.toList());
     }
 
 }

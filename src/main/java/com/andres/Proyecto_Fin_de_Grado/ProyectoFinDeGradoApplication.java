@@ -48,7 +48,7 @@ public class ProyectoFinDeGradoApplication {
 	CommandLineRunner run(ServicioUsuarioImp servicioUsuarioImp, ServicioMuelle servicioMuelle, ServicioPedido servicioPedido){
 		return args -> {
 			try {
-				/**/
+
 
 
 				Rol userRole = new Rol();
@@ -59,7 +59,7 @@ public class ProyectoFinDeGradoApplication {
 				servicioUsuarioImp.guardarRol(userRole);
 				servicioUsuarioImp.guardarRol(adminRole);
 
-				servicioMuelle.crearMuelles(100);
+				servicioMuelle.crearMuelles(20);
 
 				Usuario usuario1 = new Usuario();
 				usuario1.setUsuario("andres.arcones.crespo@gmail.com");

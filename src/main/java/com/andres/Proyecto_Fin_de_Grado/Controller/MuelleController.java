@@ -82,10 +82,10 @@ public class MuelleController {
 
         reserva = repositorioReserva.save(reserva);
 
-        muelle.getReservas()[reservaDTO.getTramoHora()] = reserva;
+        muelle.getReservas()[reservaDTO.getTramoHora()] = reserva.getId();
         repositorioMuelle.save(muelle);
 
-        userReserva.aniadirReserva(reserva);
+        userReserva.aniadirReserva(reserva.getId());
         repositorioUsuario.save(userReserva);
 
 
@@ -212,11 +212,13 @@ public class MuelleController {
             String nombre = m.getNombre();
             List<Pedido> lista = new ArrayList<>();
 
-            for(Reserva r : m.getReservas())
-                if(r != null)
+            for(String id : m.getReservas())
+                if(id != null){
+                    Reserva r = repositorioReserva.findById(id).get();
                     for(Pedido p : pedidos)
                         if(r.getIdPedido().equals(p.getId()))
                             lista.add(p);
+                }
 
 
             if(lista.size()>0)
