@@ -59,7 +59,7 @@ public class ProyectoFinDeGradoApplication {
 				servicioUsuarioImp.guardarRol(userRole);
 				servicioUsuarioImp.guardarRol(adminRole);
 
-				servicioMuelle.crearMuelles(20);
+
 
 				Usuario usuario1 = new Usuario();
 				usuario1.setUsuario("andres.arcones.crespo@gmail.com");
@@ -124,6 +124,8 @@ public class ProyectoFinDeGradoApplication {
 				p3.setHoraSalida(null);
 				p3.setEstado("no entregado");
 				servicioPedido.guardarPedido(p3);
+
+				servicioMuelle.crearMuelles(20);
 
 				System.out.println(servicioUsuarioImp.getUsuarios());
 
