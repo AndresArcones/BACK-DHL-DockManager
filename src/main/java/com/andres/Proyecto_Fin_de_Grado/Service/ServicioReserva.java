@@ -61,10 +61,10 @@ public class ServicioReserva {
         res.removeIf(r -> r.getFechaHoraReserva()!= null && !(r.getFechaHoraReserva().atZone(ZoneOffset.UTC).getDayOfYear() == SimulateClock.getMomentoSimulacion().atOffset(ZoneOffset.UTC).getDayOfYear()));
 
         Reserva foo = new Reserva();
-        foo.setFechaHoraReserva(SimulateClock.getMomentoSimulacion());
+        foo.setFechaHoraReserva(SimulateClock.getMomentoSimulacion().minusSeconds(60*10));
         res.add(foo);
         Collections.sort(res);
-        List<Reserva> ret = new ArrayList<Reserva>();
+        List<Reserva> ret = new ArrayList<>();
         int idx = res.indexOf(foo);
 
         //meter margen de 10 mins antes????

@@ -17,12 +17,18 @@ import com.andres.Proyecto_Fin_de_Grado.utilidades.DecodificarJWT;
 import com.andres.Proyecto_Fin_de_Grado.utilidades.JWT;
 import com.andres.Proyecto_Fin_de_Grado.utilidades.SimulateClock;
 import com.google.gson.Gson;
+import com.opencsv.bean.CsvToBean;
+import com.opencsv.bean.CsvToBeanBuilder;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -42,6 +48,72 @@ public class MuelleController {
     private final ServicioReserva servicioReserva;
     private final RepositorioPedido repositorioPedido;
     private final ServicioPedido servicioPedido;
+
+    // TODO: falta!
+    @PostMapping("/subir-csv-muelle")
+    public List<Muelle> uploadCSVMuelles(@RequestParam("file") MultipartFile file) {
+        List<Muelle> muelles;
+
+
+        if (file.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "fichero vacio");
+        } else {
+
+            // parse CSV file to create a list of `User` objects
+            try (Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+
+                // create csv bean reader
+                CsvToBean<Muelle> csvToBean = new CsvToBeanBuilder(reader)
+                        .withType(Muelle.class)
+                        .withIgnoreLeadingWhiteSpace(true)
+                        .build();
+
+                // convert `CsvToBean` object to list of users
+                muelles = csvToBean.parse();
+
+                // TODO: save users in DB?
+
+            } catch (Exception ex) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "no se ha podido leer el csv");
+            }
+        }
+
+        return muelles;
+    }
+
+
+    // TODO: falta quiza
+    @PostMapping("/subir-csv-pedidos")
+    public List<Muelle> uploadCSVPedidos(@RequestParam("file") MultipartFile file) {
+        List<Muelle> muelles;
+
+
+        if (file.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "fichero vacio");
+        } else {
+
+            // parse CSV file to create a list of `User` objects
+            try (Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+
+                // create csv bean reader
+                CsvToBean<Muelle> csvToBean = new CsvToBeanBuilder(reader)
+                        .withType(Muelle.class)
+                        .withIgnoreLeadingWhiteSpace(true)
+                        .build();
+
+                // convert `CsvToBean` object to list of users
+                muelles = csvToBean.parse();
+
+                // TODO: save users in DB?
+
+            } catch (Exception ex) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "no se ha podido leer el csv");
+            }
+        }
+
+        return muelles;
+    }
+
 
 
     //USER
@@ -65,14 +137,23 @@ public class MuelleController {
         Usuario userReserva = servicioUsuarioImp.getUsuarioPorNombreUsuario(token.getNombreUsuario());
         Muelle muelle = servicioMuelle.muelle(muelleId);
 
+        // TODO: temporal
+        Pedido pedido = new Pedido();
+        pedido.setId(reservaDTO.getIdPedido());
+        pedido.setMatricula(reservaDTO.getMatricula());
+        pedido.setEstado("no entregado");
+
+        servicioPedido.guardarPedido(pedido);
+
+
         Instant ahora = SimulateClock.getMomentoSimulacion();
-        int hora = muelle.getAperturaMuelle() + reservaDTO.getTramoHora() -1;
+        int hora = muelle.getAperturaMuelle() + reservaDTO.getTramoHora();
         Instant nueva = ahora.atZone(ZoneOffset.UTC)
                 .withHour(hora)
                 .withMinute(0)
                 .withSecond(0)
                 .withNano(0)
-                .toInstant().plus(0, ChronoUnit.DAYS); //CAMBIAR A +1 AL FINALIZAR CHECKEO
+                .toInstant().plus(1, ChronoUnit.DAYS); // TODO: cambiar a +1 para usar el dia siguiente
 
         Reserva reserva=  new Reserva(muelleId, muelle.getNombre(), reservaDTO.getDni(),reservaDTO.getMatricula(), reservaDTO.getIdPedido(),
                                     reservaDTO.getActividad(), nueva, reservaDTO.getTipoCamion());
@@ -94,11 +175,11 @@ public class MuelleController {
     @PostMapping("/hora")
     public void cambiarHora(@RequestBody HoraDTO horaDTO) {
 
-        if(horaDTO.getHora() == 0)
+        if(horaDTO.getHora() == -1)
             SimulateClock.setAhora(true);
 
         else{
-            Instant nueva = Instant.ofEpochMilli(horaDTO.getHora());
+            Instant nueva = Instant.ofEpochMilli(horaDTO.getHora()).plusSeconds(2*3600);
 
             SimulateClock.setAhora(false);
             SimulateClock.setMomentoSimulacion(nueva);
