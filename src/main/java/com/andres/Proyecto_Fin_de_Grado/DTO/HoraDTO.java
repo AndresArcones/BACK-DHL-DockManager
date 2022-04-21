@@ -7,5 +7,5 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class HoraDTO {
-    private String hora;
+    private long hora;
 }

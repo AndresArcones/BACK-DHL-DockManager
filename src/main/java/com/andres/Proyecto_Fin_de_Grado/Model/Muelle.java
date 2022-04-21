@@ -5,9 +5,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Optional;
+import java.util.*;
 
 @Data
 @Document
@@ -21,7 +19,7 @@ public class Muelle {
     private int aperturaMuelle; //cuando abre el muelle
     private int numeroTramosReserva; //numero de tramos (horas) de reserva
     private String estado;
-    private Reserva[] reservas;
+    private String[] reservas;
 
 
     public Muelle(String nombre,String tipoMuelle, String tipoCamion, int aperturaMuelle,int numeroTramosReserva, String estado) {
@@ -30,11 +28,11 @@ public class Muelle {
         this.aperturaMuelle = aperturaMuelle;
         this.numeroTramosReserva = numeroTramosReserva;
         this.estado = estado;
-        this.reservas = new Reserva[numeroTramosReserva];
+        this.reservas = new String[numeroTramosReserva];
         this.nombre = nombre;
     }
 
-    public boolean anularReserva(Reserva reserva){
+    public boolean anularReserva(String reserva){
         if(reserva==null)
             return false;
 
@@ -47,5 +45,9 @@ public class Muelle {
             }
 
         return ret;
+    }
+
+    public double PorcentajeUso(){
+        return (double) Arrays.stream(reservas).filter(Objects::nonNull).count()*100/reservas.length;
     }
 }

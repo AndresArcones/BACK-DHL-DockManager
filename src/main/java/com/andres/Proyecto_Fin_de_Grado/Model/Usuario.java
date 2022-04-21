@@ -20,7 +20,7 @@ public class Usuario {
     private String usuario; //mail
     private String contrasenia;
     private Collection<Rol> roles = new HashSet<>();
-    private Collection<Reserva> reservas = new HashSet<>();
+    private Collection<String> reservas = new HashSet<>();
 
     public Usuario(String nombre, String apellidos, String usuario, String contrasenia, Collection<Rol> roles) {
         this.nombre = nombre;
@@ -30,12 +30,13 @@ public class Usuario {
         this.roles = roles;
     }
 
-    public boolean anularReserva(Reserva reserva){
+    public boolean aniadirReserva(String reserva){
         if(reserva==null)
             return false;
 
-        return this.reservas.remove(reserva);
+        return this.reservas.add(reserva);
     }
+
 
 
 }
