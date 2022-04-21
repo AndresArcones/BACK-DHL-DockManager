@@ -61,7 +61,7 @@ public class ServicioReserva {
         res.removeIf(r -> r.getFechaHoraReserva()!= null && !(r.getFechaHoraReserva().atZone(ZoneOffset.UTC).getDayOfYear() == SimulateClock.getMomentoSimulacion().atOffset(ZoneOffset.UTC).getDayOfYear()));
 
         Reserva foo = new Reserva();
-        foo.setFechaHoraReserva(SimulateClock.getMomentoSimulacion().minusSeconds(60*10));
+        foo.setFechaHoraReserva(SimulateClock.getMomentoSimulacion().minusSeconds(60*11));
         res.add(foo);
         Collections.sort(res);
         List<Reserva> ret = new ArrayList<>();

@@ -82,37 +82,7 @@ public class MuelleController {
     }
 
 
-    // TODO: falta quiza
-    @PostMapping("/subir-csv-pedidos")
-    public List<Muelle> uploadCSVPedidos(@RequestParam("file") MultipartFile file) {
-        List<Muelle> muelles;
 
-
-        if (file.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "fichero vacio");
-        } else {
-
-            // parse CSV file to create a list of `User` objects
-            try (Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
-
-                // create csv bean reader
-                CsvToBean<Muelle> csvToBean = new CsvToBeanBuilder(reader)
-                        .withType(Muelle.class)
-                        .withIgnoreLeadingWhiteSpace(true)
-                        .build();
-
-                // convert `CsvToBean` object to list of users
-                muelles = csvToBean.parse();
-
-                // TODO: save users in DB?
-
-            } catch (Exception ex) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "no se ha podido leer el csv");
-            }
-        }
-
-        return muelles;
-    }
 
 
 
@@ -278,44 +248,5 @@ public class MuelleController {
         return ret;
     }
 
-    @GetMapping("/pedidos_hasta_ahora")
-    public List<Pedido> pedidos(){
-        List<Pedido> ret = repositorioPedido.findByEstadoEquals("cargado");
-        ret.addAll(repositorioPedido.findByEstadoEquals("descargado"));
-        ret.removeIf(p -> p.getHoraEntrada()!= null && !(p.getHoraEntrada().atZone(ZoneOffset.UTC).getDayOfYear() == SimulateClock.getMomentoSimulacion().atOffset(ZoneOffset.UTC).getDayOfYear()));
 
-        return ret;
-    }
-
-    @GetMapping("/pedidos_dia")
-    public Map<String,List<Pedido>> pedidosDia(){
-        List<Pedido> pedidos = repositorioPedido.findByEstadoEquals("cargado");
-        pedidos.addAll(repositorioPedido.findByEstadoEquals("descargado"));
-        pedidos.removeIf(p -> p.getHoraEntrada()!= null && !(p.getHoraEntrada().atZone(ZoneOffset.UTC).getDayOfYear() == SimulateClock.getMomentoSimulacion().atOffset(ZoneOffset.UTC).getDayOfYear()));
-
-        List<Muelle> muelles = repositorioMuelle.findAll();
-
-        Map<String, List<Pedido>> map = new LinkedHashMap<String, List<Pedido>>();
-
-        for(Muelle m : muelles){
-            String nombre = m.getNombre();
-            List<Pedido> lista = new ArrayList<>();
-
-            for(String id : m.getReservas())
-                if(id != null){
-                    Reserva r = repositorioReserva.findById(id).get();
-                    for(Pedido p : pedidos)
-                        if(r.getIdPedido().equals(p.getId()))
-                            lista.add(p);
-                }
-
-
-            if(lista.size()>0)
-                map.put(nombre,lista);
-            else
-                map.put(nombre,null);
-        }
-
-        return map;
-    }
 }
