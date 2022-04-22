@@ -66,8 +66,8 @@ public class ProyectoFinDeGradoApplication {
 				usuario1.setContrasenia("1234");
 				usuario1.setNombre("Andrés");
 				usuario1.setApellidos("Arcones Crespo");
-				usuario1.getRoles().add(userRole);
-				//usuario1.getRoles().add(adminRole);
+				//usuario1.getRoles().add(userRole);
+				usuario1.getRoles().add(adminRole);
 
 				Usuario usuario2 = new Usuario();
 				usuario2.setUsuario("santiago.ramonycajal@gmail.com");
