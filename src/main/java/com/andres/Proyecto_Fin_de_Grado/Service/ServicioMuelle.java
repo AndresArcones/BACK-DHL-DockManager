@@ -28,6 +28,10 @@ public class ServicioMuelle {
         }
     }
 
+    public void guardarMuelle(Muelle muelle){
+        repositorioMuelle.save(muelle);
+    }
+
 
     public Collection<Muelle> mostrarMuelles(){
         return repositorioMuelle.findAll();

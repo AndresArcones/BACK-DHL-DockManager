@@ -16,6 +16,7 @@ import com.andres.Proyecto_Fin_de_Grado.Service.ServicioUsuarioImp;
 import com.andres.Proyecto_Fin_de_Grado.utilidades.DecodificarJWT;
 import com.andres.Proyecto_Fin_de_Grado.utilidades.JWT;
 import com.andres.Proyecto_Fin_de_Grado.utilidades.SimulateClock;
+import com.opencsv.CSVReader;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import lombok.AllArgsConstructor;
@@ -32,6 +33,7 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -47,36 +49,38 @@ public class PedidoController {
     private final ServicioPedido servicioPedido;
 
 
-    // TODO: falta quiza
-    @PostMapping("/subir-csv-pedidos")
-    public List<Muelle> uploadCSVPedidos(@RequestParam("file") MultipartFile file) {
+    @PostMapping("/subir-csv-pedido")
+    public List<String[]> uploadCSVPedidos(@RequestParam("file") MultipartFile file) {
         List<Muelle> muelles;
+        List<String[]> lineas = null;
 
 
         if (file.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "fichero vacio");
         } else {
 
-            // parse CSV file to create a list of `User` objects
-            try (Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
 
-                // create csv bean reader
-                CsvToBean<Muelle> csvToBean = new CsvToBeanBuilder(reader)
-                        .withType(Muelle.class)
-                        .withIgnoreLeadingWhiteSpace(true)
-                        .build();
+            try (CSVReader reader = new CSVReader(new InputStreamReader(file.getInputStream()))) {
+                lineas = reader.readAll();
+                lineas.remove(0);
+                List<String[]> datos = Arrays.stream(lineas.toArray(new String[lineas.size()][])).collect(Collectors.toList());
 
-                // convert `CsvToBean` object to list of users
-                muelles = csvToBean.parse();
+                for (String[] pedido: datos) {
+                    Pedido ped = new Pedido();
+                    ped.setId(pedido[1]);
+                    servicioPedido.guardarPedido(ped);
+                }
 
-                // TODO: save users in DB?
+                //System.out.println(datos);*/
+
+
 
             } catch (Exception ex) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "no se ha podido leer el csv");
             }
         }
 
-        return muelles;
+        return lineas;
     }
 
 

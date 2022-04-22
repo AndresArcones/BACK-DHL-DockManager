@@ -59,10 +59,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers("/api/video/**").hasAuthority("ROL_USER");*/
 
         //http.authorizeRequests().antMatchers("/api/reservas").hasAuthority("ROL_ADMIN");
+
         http.authorizeRequests().antMatchers("**").permitAll();
 
-
         http.authorizeRequests().anyRequest().authenticated();
+
         http.addFilter(filtroAutentificacion);
         http.addFilterBefore(new FiltroAutorizacion(), UsernamePasswordAuthenticationFilter.class); //filtro de autorización para cada llamada
 
