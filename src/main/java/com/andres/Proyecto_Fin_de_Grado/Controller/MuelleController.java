@@ -20,6 +20,7 @@ import com.google.gson.Gson;
 import com.opencsv.CSVReader;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
+import com.opencsv.exceptions.CsvException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.parameters.P;
@@ -27,10 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -66,6 +64,7 @@ public class MuelleController {
             try (CSVReader reader = new CSVReader(new InputStreamReader(file.getInputStream()))) {
                 lineas = reader.readAll();
                 lineas.remove(0);
+                if(lineas.size() > 500) throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Excede el número maximo de muelles permitido");
                 List<String[]> datos = Arrays.stream(lineas.toArray(new String[lineas.size()][])).collect(Collectors.toList());
 
                 repositorioMuelle.deleteAll();
@@ -79,8 +78,10 @@ public class MuelleController {
 
 
 
-            } catch (Exception ex) {
+            } catch (IOException | CsvException ex) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "no se ha podido leer el csv");
+            }catch(ResponseStatusException ex){
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Excede el número maximo de muelles permitido");
             }
         }
 
