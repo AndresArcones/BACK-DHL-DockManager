@@ -65,6 +65,7 @@ public class MuelleController {
                 lineas = reader.readAll();
                 lineas.remove(0);
                 if(lineas.size() > 500) throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Excede el número maximo de muelles permitido");
+                if(lineas.size() == 0) throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No se encontraron muelles en el fichero");
                 List<String[]> datos = Arrays.stream(lineas.toArray(new String[lineas.size()][])).collect(Collectors.toList());
 
                 repositorioMuelle.deleteAll();
@@ -81,7 +82,7 @@ public class MuelleController {
             } catch (IOException | CsvException ex) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "no se ha podido leer el csv");
             }catch(ResponseStatusException ex){
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Excede el número maximo de muelles permitido");
+                throw ex;
             }
         }
 
