@@ -17,6 +17,7 @@ import com.andres.Proyecto_Fin_de_Grado.utilidades.DecodificarJWT;
 import com.andres.Proyecto_Fin_de_Grado.utilidades.JWT;
 import com.andres.Proyecto_Fin_de_Grado.utilidades.SimulateClock;
 import com.google.gson.Gson;
+import com.opencsv.CSVReader;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import lombok.AllArgsConstructor;
@@ -27,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.time.Duration;
@@ -35,6 +37,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -49,37 +52,41 @@ public class MuelleController {
     private final RepositorioPedido repositorioPedido;
     private final ServicioPedido servicioPedido;
 
-    // TODO: falta!
     @PostMapping("/subir-csv-muelle")
-    public List<Muelle> uploadCSVMuelles(@RequestParam("file") MultipartFile file) {
+    public List<String[]> uploadCSVMuelles(@RequestParam("file") MultipartFile file) {
         List<Muelle> muelles;
+        List<String[]> lineas = null;
 
 
         if (file.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "fichero vacio");
         } else {
 
-            // parse CSV file to create a list of `User` objects
-            try (Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
 
-                // create csv bean reader
-                CsvToBean<Muelle> csvToBean = new CsvToBeanBuilder(reader)
-                        .withType(Muelle.class)
-                        .withIgnoreLeadingWhiteSpace(true)
-                        .build();
+            try (CSVReader reader = new CSVReader(new InputStreamReader(file.getInputStream()))) {
+                lineas = reader.readAll();
+                lineas.remove(0);
+                List<String[]> datos = Arrays.stream(lineas.toArray(new String[lineas.size()][])).collect(Collectors.toList());
 
-                // convert `CsvToBean` object to list of users
-                muelles = csvToBean.parse();
+                repositorioMuelle.deleteAll();
 
-                // TODO: save users in DB?
+                for (String[] muelle: datos) {
+                    servicioMuelle.guardarMuelle(new Muelle(muelle[0].toLowerCase(),
+                                                muelle[2].toLowerCase(),muelle[1].toLowerCase(),6,8,"libre"));
+                }
+
+                    //System.out.println(datos);*/
+
+
 
             } catch (Exception ex) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "no se ha podido leer el csv");
             }
         }
 
-        return muelles;
+        return lineas;
     }
+
 
 
 

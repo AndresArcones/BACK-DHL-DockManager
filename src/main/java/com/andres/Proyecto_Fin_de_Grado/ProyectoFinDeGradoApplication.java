@@ -66,7 +66,7 @@ public class ProyectoFinDeGradoApplication {
 				usuario1.setContrasenia("1234");
 				usuario1.setNombre("Andrés");
 				usuario1.setApellidos("Arcones Crespo");
-				usuario1.getRoles().add(userRole);
+				//usuario1.getRoles().add(userRole);
 				usuario1.getRoles().add(adminRole);
 
 				Usuario usuario2 = new Usuario();
@@ -95,7 +95,7 @@ public class ProyectoFinDeGradoApplication {
 				servicioUsuarioImp.guardarUsuario(usuario3);
 				servicioUsuarioImp.guardarUsuario(usuario4);
 
-				Pedido p1 = new Pedido();
+				/*Pedido p1 = new Pedido();
 				p1.setId("5876123");
 				p1.setHoraSalida(null);
 				p1.setHoraEntrada(null);
@@ -127,7 +127,7 @@ public class ProyectoFinDeGradoApplication {
 
 				servicioMuelle.crearMuelles(20);
 
-				System.out.println(servicioUsuarioImp.getUsuarios());
+				System.out.println(servicioUsuarioImp.getUsuarios());*/
 
 			}catch (Exception e){
 				e.printStackTrace();
