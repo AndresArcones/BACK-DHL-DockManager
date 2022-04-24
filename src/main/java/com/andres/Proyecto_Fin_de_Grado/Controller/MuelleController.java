@@ -248,5 +248,9 @@ public class MuelleController {
         return ret;
     }
 
+    @GetMapping("/hora_simulada")
+    public Instant hora_simulada(){
+        return SimulateClock.getMomentoSimulacion();
+    }
 
 }
