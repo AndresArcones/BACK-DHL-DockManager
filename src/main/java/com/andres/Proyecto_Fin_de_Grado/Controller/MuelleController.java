@@ -257,7 +257,9 @@ public class MuelleController {
 
     @GetMapping("/hora_simulada")
     public HoraSimDTO hora_simulada(){
-        return new HoraSimDTO().setHora(SimulateClock.getMomentoSimulacion());
+        HoraSimDTO hora = new HoraSimDTO();
+        hora.setHora(SimulateClock.getMomentoSimulacion());
+        return hora;
     }
 
 }
