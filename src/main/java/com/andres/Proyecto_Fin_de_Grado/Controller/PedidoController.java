@@ -19,6 +19,7 @@ import com.andres.Proyecto_Fin_de_Grado.utilidades.SimulateClock;
 import com.opencsv.CSVReader;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
+import com.opencsv.exceptions.CsvException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.time.Duration;
@@ -63,6 +65,7 @@ public class PedidoController {
             try (CSVReader reader = new CSVReader(new InputStreamReader(file.getInputStream()))) {
                 lineas = reader.readAll();
                 lineas.remove(0);
+                if(lineas.size() == 0) throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No se encontraron pedidos en el fichero");
                 List<String[]> datos = Arrays.stream(lineas.toArray(new String[lineas.size()][])).collect(Collectors.toList());
 
                 for (String[] pedido: datos) {
@@ -75,8 +78,10 @@ public class PedidoController {
 
 
 
-            } catch (Exception ex) {
+            } catch (IOException | CsvException ex) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "no se ha podido leer el csv");
+            }catch (ResponseStatusException ex){
+                throw ex;
             }
         }
 

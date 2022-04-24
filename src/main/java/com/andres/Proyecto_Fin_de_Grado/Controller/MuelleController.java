@@ -184,6 +184,7 @@ public class MuelleController {
                 ped.setHoraEntrada(SimulateClock.getMomentoSimulacion());
                 mue.setEstado("ocupado");
 
+
                 if(mue.getTipoMuelle() == "carga")
                     ped.setEstado("cargando");
                 else
@@ -200,7 +201,7 @@ public class MuelleController {
                 ped.setTiempoTardado(Duration.between(ped.getHoraEntrada(), ped.getHoraSalida()).toMinutes());
                 mue.setEstado("libre");
             }
-
+            servicioMuelle.guardarMuelle(mue);
             repositorioPedido.save(ped);
         }
 
