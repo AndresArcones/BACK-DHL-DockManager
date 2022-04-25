@@ -71,6 +71,7 @@ public class MuelleController {
                 repositorioMuelle.deleteAll();
 
                 for (String[] muelle: datos) {
+                    muelle = muelle[0].split(";");
                     servicioMuelle.guardarMuelle(new Muelle(muelle[0].toLowerCase(),
                                                 muelle[2].toLowerCase(),muelle[1].toLowerCase(),6,8,"libre"));
                 }
@@ -117,10 +118,17 @@ public class MuelleController {
         Muelle muelle = servicioMuelle.muelle(muelleId);
 
         // TODO: temporal
-        Pedido pedido = new Pedido();
-        pedido.setId(reservaDTO.getIdPedido());
+        Optional<Pedido> pedidoOpt = repositorioPedido.findById(reservaDTO.getIdPedido());
+
+        if(!pedidoOpt.isPresent())
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"El pedido indicado en la reserva no existe");
+
+        Pedido pedido = pedidoOpt.get();
+
+        if(!pedido.getTipoPedido().equals(muelle.getTipoMuelle()))
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"El tipo de pedido indicado no coincide con el  del muelle");
+
         pedido.setMatricula(reservaDTO.getMatricula());
-        pedido.setEstado("no entregado");
 
         servicioPedido.guardarPedido(pedido);
 

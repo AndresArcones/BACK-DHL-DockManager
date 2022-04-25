@@ -69,8 +69,10 @@ public class PedidoController {
                 List<String[]> datos = Arrays.stream(lineas.toArray(new String[lineas.size()][])).collect(Collectors.toList());
 
                 for (String[] pedido: datos) {
+                    pedido = pedido[0].split(";");
                     Pedido ped = new Pedido();
                     ped.setId(pedido[1]);
+                    ped.setTipoPedido(pedido[2].toLowerCase());
                     servicioPedido.guardarPedido(ped);
                 }
 

@@ -17,8 +17,9 @@ public class Pedido {
     private String id;
     private Instant horaEntrada;
     private Instant horaSalida;
-    private String estado;
+    private String estado = "no entregado";
     private String matricula;
+    private String tipoPedido;
     private long retraso = 0;
     private long tiempoTardado = -1;
 
