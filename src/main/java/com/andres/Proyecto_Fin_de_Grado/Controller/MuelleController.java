@@ -197,6 +197,9 @@ public class MuelleController {
                     ped.setEstado("cargando");
                 else
                     ped.setEstado("descargando");
+
+                res.setRealizada(true);
+                repositorioReserva.save(res);
             }
             else {
                 ped.setHoraSalida(SimulateClock.getMomentoSimulacion());
