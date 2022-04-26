@@ -117,7 +117,7 @@ public class MuelleController {
         Usuario userReserva = servicioUsuarioImp.getUsuarioPorNombreUsuario(token.getNombreUsuario());
         Muelle muelle = servicioMuelle.muelle(muelleId);
 
-        // TODO: temporal
+
         Optional<Pedido> pedidoOpt = repositorioPedido.findById(reservaDTO.getIdPedido());
 
         if(!pedidoOpt.isPresent())
@@ -140,7 +140,7 @@ public class MuelleController {
                 .withMinute(0)
                 .withSecond(0)
                 .withNano(0)
-                .toInstant().plus(1, ChronoUnit.DAYS); // TODO: cambiar a +1 para usar el dia siguiente
+                .toInstant().plus(1, ChronoUnit.DAYS);
 
         Reserva reserva=  new Reserva(muelleId, muelle.getNombre(), reservaDTO.getDni(),reservaDTO.getMatricula(), reservaDTO.getIdPedido(),
                                     reservaDTO.getActividad(), nueva, reservaDTO.getTipoCamion());

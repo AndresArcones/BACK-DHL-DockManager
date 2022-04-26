@@ -129,4 +129,11 @@ public class PedidoController {
 
         return ret;
     }
+
+    @GetMapping("/pedido/{id}")
+    public Pedido getPedidoId(@PathVariable String id){
+        return repositorioPedido.findById(id).get();
+    }
+
+
 }
