@@ -31,7 +31,9 @@ public class ServicioReserva {
 
     public Reserva comprobarReserva(String matricula, Instant fechaHoraReserva) {
         List<Reserva> res = repositorioReserva.findByMatriculaEquals(matricula);
-        res.removeIf(r -> r.getFechaHoraReserva()!= null && !(r.getFechaHoraReserva().atZone(ZoneOffset.UTC).getDayOfYear() == SimulateClock.getMomentoSimulacion().atOffset(ZoneOffset.UTC).getDayOfYear()));
+        int diaRes = res.get(0).getFechaHoraReserva().atZone(ZoneOffset.UTC).getDayOfYear();
+        int diaSim = SimulateClock.getMomentoSimulacion().atZone(ZoneOffset.UTC).getDayOfYear();
+        res.removeIf(r -> r.getFechaHoraReserva()!= null && !(diaRes==diaSim));
         // si es a las 23:50 técnicamente no es el mismo día, lo ponemos??
 
         if(res.isEmpty())
