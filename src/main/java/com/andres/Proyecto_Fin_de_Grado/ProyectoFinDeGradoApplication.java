@@ -77,7 +77,7 @@ public class ProyectoFinDeGradoApplication {
 				usuario2.getRoles().add(userRole);
 
 				Usuario usuario3 = new Usuario();
-				usuario3.setUsuario("steve.Jobs@gmail.com");
+				usuario3.setUsuario("steve.jobs@gmail.com");
 				usuario3.setContrasenia("1234");
 				usuario3.setNombre("Steve");
 				usuario3.setApellidos("Jobs");
