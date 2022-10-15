@@ -44,4 +44,8 @@ public class Reserva implements Comparable<Reserva>{
         return getFechaHoraReserva().compareTo(reserva.getFechaHoraReserva());
     }
 
+    public boolean getAnulada(){
+        return this.anulada;
+    }
+
 }

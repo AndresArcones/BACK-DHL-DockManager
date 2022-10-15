@@ -34,6 +34,7 @@ public class ServicioReserva {
         int diaRes = res.get(0).getFechaHoraReserva().atZone(ZoneOffset.UTC).getDayOfYear();
         int diaSim = SimulateClock.getMomentoSimulacion().atZone(ZoneOffset.UTC).getDayOfYear();
         res.removeIf(r -> r.getFechaHoraReserva()!= null && !(diaRes==diaSim));
+        res.removeIf(r -> r.getAnulada());
         // si es a las 23:50 técnicamente no es el mismo día, lo ponemos??
 
         if(res.isEmpty())
